@@ -1,0 +1,2 @@
+name = "text-to-speech"
+main = "worker.js"
