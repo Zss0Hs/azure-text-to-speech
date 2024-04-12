@@ -17,8 +17,10 @@ jobs:
         run: npm install -g wrangler
       - name: Build
         run: npm run build
-      - name: Build & Deploy Worker
+      - name: Deploy Worker to Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: './dist'
+          entryPoint: 'worker.js'
