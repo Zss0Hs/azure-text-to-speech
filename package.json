@@ -7,7 +7,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm install && webpack --mode production && wrangler publish"
+    "build": "npm install && webpack --mode production",
+    "publish": "wrangler publish"
   },
   "author": "Microsoft",
   "license": "MIT",
@@ -19,7 +20,8 @@
   "devDependencies": {
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.1",
-    "@cloudflare/wrangler": "^1.19.3"
+    "wrangler": "^3.50.0"  // 假设 2.0.0 是 Wrangler 的最新版本
   }
 }
+
 
