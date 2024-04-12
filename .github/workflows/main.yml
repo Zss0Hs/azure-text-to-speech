@@ -9,7 +9,6 @@ jobs:
     environment: 
       name:  default
     timeout-minutes: 60
-    needs: test
     steps:
       - uses: actions/checkout@v4
       - name: Build
