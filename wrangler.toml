@@ -1,0 +1,4 @@
+name = "text-to-speech "
+type = "webpack"
+account_id = "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
+workers_dev = true
