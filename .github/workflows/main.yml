@@ -1,24 +1,22 @@
+name: Deploy Worker
 on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
     environment: 
       name:  default
-    name: Deploy to Cloudflare Workers
+    timeout-minutes: 60
+    needs: test
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      # Run your project's build step
+      - uses: actions/checkout@v4
       - name: Build
         run: npm install && npm run build
       - name: Deploy
-        uses: cloudflare/wrangler-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
