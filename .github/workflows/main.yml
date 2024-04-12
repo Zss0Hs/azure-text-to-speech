@@ -8,8 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: 
-      name: default
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -19,8 +17,8 @@ jobs:
         run: npm install -g wrangler
       - name: Build
         run: npm run build
-      - name: Deploy to Cloudflare Workers
-        run: wrangler publish --name "${{ env.WORKER_NAME }}" --account-id ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} --api-token ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        env:
-          WORKER_NAME: text-to-speech
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Build & Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
