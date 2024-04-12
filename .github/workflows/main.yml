@@ -17,9 +17,7 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
-      - name: Deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
+      - name: Deploy to Cloudflare Workers
+        run: wrangler publish --name "${{ env.WORKER_NAME }}" --account-id ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} --api-token ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        env:
+          WORKER_NAME: text-to-speech-worker
