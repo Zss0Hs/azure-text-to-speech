@@ -25,4 +25,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: 'dist'
-          command: deploy dist/worker.js --project-name=text-to-speech --branch='main'
+          command: deploy dist/worker.js --name=text-to-speech
