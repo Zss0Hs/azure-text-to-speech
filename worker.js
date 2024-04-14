@@ -1,47 +1,81 @@
 // 定义全局变量存储 access_token 和上次更新时间
 let accessToken = '';
 let lastTokenUpdateTime = 0;
-const authenticationString = "kvzNEPnTfeKMZcdNgZnHHZvfAe";
+let authenticationString = "kvzNEPnTfeKMZcdNgZnHHZvfAe"; // 默认的验证字符串
+let region = 'eastus';
 
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
+// 定义 API URL 和 Token URL
+let apiUrl = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
+let tokenUrl = `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issueToken`;
 
-async function handleRequest(request) {
-  // 验证请求头中的验证字符串
-  const authHeader = request.headers.get('Authorization');
-  if (authHeader !== authenticationString) {
-    return new Response('Unauthorized', { status: 404 });
-  }
+export default {
+  async fetch(request, env, ctx) {
 
-  // 解析请求中的文本
-  let text;
-  try {
-    text = await extractTextFromBody(request);
-  } catch (error) {
-    console.error('Failed to extract text from request body:', error);
-    return new Response('Failed to extract text from request body', { status: 400 });
-  }
+    // 输出环境变量对象以进行调试
+    // console.log(env);
 
-  // 获取订阅密钥
-  const subscriptionKey = request.headers.get('Subscription-Key');
+    //取环境变量ENV_AUTHORIZATION的值，或取默认值
+    authenticationString = env.ENV_AUTHORIZATION || authenticationString;
+     //取环境变量ENV_REGION的值，或取默认值
+    region = env.ENV_REGION || region;
 
-  // 获取 access_token
-  if (needsTokenRefresh()) {
-    await refreshToken(subscriptionKey);
-  }
+    // 定义 API URL 和 Token URL
+    apiUrl = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
+    tokenUrl = `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issueToken`;  
 
-  // 将文本发送到转换 API 进行转换
-  const audioResponse = await convertTextToSpeech(text, subscriptionKey);
-
-  // 将返回的音频文件返回给请求
-  return new Response(audioResponse.body, {
-    status: audioResponse.status,
-    headers: {
-      'Content-Type': audioResponse.headers.get('Content-Type')
+    // 验证请求头中的验证字符串
+    const authHeader = request.headers.get('Authorization');
+    const effectiveAuthString = authHeader || authenticationString;
+    if (effectiveAuthString !== authenticationString) {
+      return new Response('Unauthorized', { status: 404 });
     }
-  });
+
+    // 解析请求中的文本
+    let text;
+    try {
+      text = await extractTextFromBody(request);
+    } catch (error) {
+      console.error('Failed to extract text from request body:', error);
+      return new Response('Failed to extract text from request body. Please follow json format :{"text":"some texts"}', { status: 400 });
+    }
+
+    // 获取订阅密钥
+    const subscriptionKey = request.headers.get('Subscription-Key') || env.ENV_SUBSCRIPTION_KEY;
+
+    // 如果没有订阅密钥，则返回错误
+    if (!subscriptionKey) {
+      return new Response('Missing Subscription-Key header. Add subscription_key to the request header or set the Workers environment variable ENV_SUBSCRIPTION_KEY ', { status: 400 });
+    }
+
+    // 获取 access_token
+    if (needsTokenRefresh()) {
+      try {
+        await refreshToken(subscriptionKey);
+      } catch (error) {
+        console.error('Failed to refresh access token:', error.message);
+        return new Response('Failed to refresh access token. Check the Workers environment variable ENV_REGION', { status: 500 });
+      }
+    }
+
+    // 将文本发送到转换 API 进行转换
+    let audioResponse;
+    try {
+      audioResponse = await convertTextToSpeech(text);
+    } catch (error) {
+      console.error('Failed to convert text to speech:', error.message);
+      return new Response('Failed to convert text to speech. Check the Workers environment variable ENV_REGION', { status: 500 });
+    }
+
+    // 将返回的音频文件返回给请求
+    return new Response(audioResponse.body, {
+      status: audioResponse.status,
+      headers: {
+        'Content-Type': audioResponse.headers.get('Content-Type')
+      }
+    });
+  }
 }
+
 
 // 从请求体中提取文本
 async function extractTextFromBody(request) {
@@ -74,8 +108,6 @@ function needsTokenRefresh() {
 
 // 获取新的 access_token
 async function refreshToken(subscriptionKey) {
-  const tokenUrl = 'https://eastus.api.cognitive.microsoft.com/sts/v1.0/issueToken';
-
   const response = await fetch(tokenUrl, {
     method: 'POST',
     headers: {
@@ -96,11 +128,10 @@ async function refreshToken(subscriptionKey) {
 }
 
 // 将文本发送到转换 API 进行转换
-async function convertTextToSpeech(text, subscriptionKey) {
-  const apiUrl = 'https://eastus.tts.speech.microsoft.com/cognitiveservices/v1';
+async function convertTextToSpeech(text) {
   const outputFormat = 'riff-24khz-16bit-mono-pcm';
   const voiceName = 'zh-CN-XiaoxiaoNeural';
-  const style = 'gentle';  //'default'默认 'friendly'友好 'chat'聊天 'gentle'温柔
+  const style = 'gentle'; //'default'默认 'friendly'友好 'chat'聊天 'gentle'温柔
   const ssml = `<speak version='1.0' xml:lang='zh-CN'><voice xml:lang='zh-CN' style='${style}' name='${voiceName}'>${text}</voice></speak>`;
 
   const response = await fetch(apiUrl, {
