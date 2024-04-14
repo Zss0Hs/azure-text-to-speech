@@ -3,6 +3,9 @@ let accessToken = '';
 let lastTokenUpdateTime = 0;
 let authenticationString = "kvzNEPnTfeKMZcdNgZnHHZvfAe"; // 默认的验证字符串
 let region = 'eastus';
+let outputFormat = 'riff-24khz-16bit-mono-pcm';
+let voiceName = 'zh-CN-XiaoxiaoNeural';
+let style = 'gentle'; //'default'默认 'friendly'友好 'chat'聊天 'gentle'温柔
 
 // 定义 API URL 和 Token URL
 let apiUrl = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
@@ -18,6 +21,9 @@ export default {
     authenticationString = env.ENV_AUTHORIZATION || authenticationString;
      //取环境变量ENV_REGION的值，或取默认值
     region = env.ENV_REGION || region;
+    outputFormat = env.ENV_OUTPUT_FORMAT || outputFormat;
+    voiceName = env.ENV_VOICE_NAME || voiceName;
+    style = env.ENV_STYLE || style;
 
     // 定义 API URL 和 Token URL
     apiUrl = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
@@ -128,9 +134,6 @@ async function refreshToken(subscriptionKey) {
 
 // 将文本发送到转换 API 进行转换
 async function convertTextToSpeech(text) {
-  const outputFormat = 'riff-24khz-16bit-mono-pcm';
-  const voiceName = 'zh-CN-XiaoxiaoNeural';
-  const style = 'gentle'; //'default'默认 'friendly'友好 'chat'聊天 'gentle'温柔
   const ssml = `<speak version='1.0' xml:lang='zh-CN'><voice xml:lang='zh-CN' style='${style}' name='${voiceName}'>${text}</voice></speak>`;
 
   const response = await fetch(apiUrl, {
