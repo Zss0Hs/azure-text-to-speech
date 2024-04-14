@@ -25,8 +25,7 @@ export default {
 
     // 验证请求头中的验证字符串
     const authHeader = request.headers.get('Authorization');
-    const effectiveAuthString = authHeader || authenticationString;
-    if (effectiveAuthString !== authenticationString) {
+    if (authHeader !== authenticationString) {
       return new Response('Unauthorized', { status: 404 });
     }
 
