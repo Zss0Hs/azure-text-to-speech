@@ -23,4 +23,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy worker.js --name text-to-speech --compatibility-date ${{ steps.generate-date.outputs.date }}
+          command: deploy worker.js --name text-to-speech --compatibility-date ${{ steps.generate-date.outputs.date }} --var ENV_AUTHORIZATION:kvzNEPnTfeKMZcdNgZnHHZvfAe ENV_REGION:eastus 
