@@ -4,7 +4,7 @@
 
 
 
-主要为了方便 阅读app https://gedoor.github.io/ 朗读功能的调用，使用cloudflare 的 Worker 转发接收的文本，然后发送到 azure 文本转语言的 REST API，最后返回转换后的音频。
+主要为了方便 阅读app <a href="https://gedoor.github.io/" target="_blank">https://gedoor.github.io/</a> 朗读功能的调用，使用cloudflare 的 Worker 转发接收的文本，然后发送到 azure 文本转语言的 REST API，最后返回转换后的音频。
 
 
 
@@ -21,13 +21,13 @@ Workers 一共可以设置6个变量，在 Workers 的 **设置** -- **变量** 
 
 
 
-REST API 的文档网址：https://learn.microsoft.com/en-us/azure/ai-services/speech-service/rest-text-to-speech
+REST API 的文档网址：<a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/rest-text-to-speech" target="_blank">https://learn.microsoft.com/en-us/azure/ai-services/speech-service/rest-text-to-speech</a>
 
 
 
 #### 部署到 cloudflare 的 Worker
 
-在Workers 和 Pages页面点 **创建应用程序**，然后点 **创建Worker**，输入一个Worker名称，点**部署**，一个 Worker 就创建好了。
+在 Workers 和 Pages 页面点 **创建应用程序**，然后点 **创建Worker**，输入一个Worker名称，点**部署**，一个 Worker 就创建好了。
 
 点 **编辑代码** ，将 worker.js 文件中的所有内容复制到页面中，点 **部署** 并 **保存** ，然后返回上一步到Worker配置页面。
 
@@ -43,7 +43,7 @@ REST API 的文档网址：https://learn.microsoft.com/en-us/azure/ai-services/s
 
 ##### 阅读app设置
 
-在阅读界面，进入朗读设置，点 **朗读引擎** ，点 **+** 号添加朗读引擎，然后点**三个点**，**粘贴源** 。粘贴内容根据实际情况修改：
+在阅读界面，进入朗读设置，点 **朗读引擎** ，点 **+** 号添加朗读引擎，然后点 **三个点**，**粘贴源** 。粘贴内容根据实际情况修改：
 
 如果上边没有配置 ENV_SUBSCRIPTION_KEY 环境变量，那么密钥就要通过请求头提供：
 
