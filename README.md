@@ -4,7 +4,7 @@
 
 
 
-主要为了方便 阅读app https://github.com/gedoor/gedoor.github.io 朗读功能的调用，使用cloudflare 的 Worker 转发接收的文本，然后发送到 azure 文本转语言的 REST API，最后返回转换后的音频。
+主要为了方便 阅读app https://gedoor.github.io/ 朗读功能的调用，使用cloudflare 的 Worker 转发接收的文本，然后发送到 azure 文本转语言的 REST API，最后返回转换后的音频。
 
 
 
